@@ -1,13 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
+import logging
+
 
 def fetch_google_news():
     """Fetch Technology news from Google News RSS feed."""
     url_rss = "https://news.google.com/rss/topics/CAAqLAgKIiZDQkFTRmdvSkwyMHZNR1ptZHpWbUVnVjZhQzFVVnhvQ1ZGY29BQVAB?hl=zh-TW&gl=TW&ceid=TW%3Azh-Hant"
+    logging.info(f"Fetching news from: {url_rss}")
     response = requests.get(url_rss)
     
     if response.status_code != 200:
-        print(f"Failed to fetch news: {response.status_code}")
+        logging.error(f"Failed to fetch news: {response.status_code}")
         return []
 
     # XML processed by lxml package
@@ -28,10 +31,11 @@ def fetch_google_news():
             "content": description
         })
 
+    logging.info(f"Fetched {len(news_list)} articles from Google News.")
     return news_list
 
 if __name__ == "__main__":
     news = fetch_google_news()
-    print(f"Fetched {len(news)} articles from Google News:")
+    logging.info(f"Fetched {len(news)} articles from Google News:")
     for article in news:
-        print(f"- {article['title']} ({article['url']})")
+        logging.info(f"- {article['title']} ({article['url']})")

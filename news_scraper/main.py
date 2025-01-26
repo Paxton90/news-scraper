@@ -1,20 +1,22 @@
 import schedule
 import time
+import logging
 from db_handler import initialize_db, save_to_db
 from news_fetcher import fetch_google_news
 
+
 def scheduled_job():
     """Scheduled job to fetch and save news."""
-    print("Fetching news...")
-    news_list = fetch_google_news()
-    skipped_duplicates, saved_news = save_to_db(news_list)
-    print(f"Fetched {len(news_list)} news articles.")
-    print(f"Skipped {skipped_duplicates} duplicates.")
-    print(f"Saved {len(saved_news)} new articles.")
+    logging.info("Fetching news...")
+    try:
+        news_list = fetch_google_news()
+        save_to_db(news_list)
+    except Exception as e:
+        logging.error(f"Error during scheduled job: {e}")
 
 def main():
     """Main function to initialize and run the scheduler."""
-    print("Starting news scraper...")
+    logging.info("Starting news scraper...")
     initialize_db()
 
     schedule.every(5).minutes.do(scheduled_job)
